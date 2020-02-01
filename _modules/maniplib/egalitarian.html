@@ -1,0 +1,369 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>maniplib.egalitarian &#8212; ManipLib 2020 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for maniplib.egalitarian</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">maniplib.manipulation_utils</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">gurobipy</span> <span class="k">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="merge_scoremaps"><a class="viewcode-back" href="../../index.html#maniplib.egalitarian.merge_scoremaps">[docs]</a><span class="k">def</span> <span class="nf">merge_scoremaps</span><span class="p">(</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">solution</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	merge manipulative approvals and unmanipulative scoremap</span>
+
+<span class="sd">	:param scoremap: mapping from candidates to scores (dict)</span>
+<span class="sd">	:param solution: number of approvals per candidate (dict)</span>
+
+<span class="sd">	:returns: mapping from candidates to manipulative scores</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># check if solution is empty</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">solution</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">scoremap</span>
+
+	<span class="n">new_scoremap</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span><span class="p">:</span>
+		<span class="n">new_scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">=</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">+</span> <span class="n">solution</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">new_scoremap</span></div>
+
+<div class="viewcode-block" id="get_candidate_indices"><a class="viewcode-back" href="../../index.html#maniplib.egalitarian.get_candidate_indices">[docs]</a><span class="k">def</span> <span class="nf">get_candidate_indices</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	get approved candidate indices and amount of approvals from group counts</span>
+
+<span class="sd">	:param m: number of candidates (int)</span>
+<span class="sd">	:param T: types, tuples of utility values (list)</span>
+<span class="sd">	:param r: number of manipulators (int)</span>
+<span class="sd">	:param z: lowest possible score of a winning candidate (int)</span>
+<span class="sd">	:param candidates: list of each candidate&#39;s type</span>
+<span class="sd">	:param scoremap: mapping from candidates to scores (dict)</span>
+
+<span class="sd">	:returns: number of approvals per candidate</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># init solution dict</span>
+	<span class="n">solution</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scoremap</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">solution</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># iterate over all groups</span>
+	<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">:</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">G</span> <span class="o">=</span> <span class="n">cand_in_group</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+
+			<span class="c1"># compute number of candidates from group to be approved</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">getVarByName</span><span class="p">(</span><span class="s2">&quot;X[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+			<span class="n">x_p</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">getVarByName</span><span class="p">(</span><span class="s2">&quot;X_p[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+
+			<span class="n">app</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x_p</span>
+			<span class="k">if</span> <span class="n">app</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">getVarByName</span><span class="p">(</span><span class="s2">&quot;X[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">))</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">getVarByName</span><span class="p">(</span><span class="s2">&quot;X_p[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">))</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;app =&quot;</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="s2">&quot;, len(G) =&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="s2">&quot;x =&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;x_p =&quot;</span><span class="p">,</span> <span class="n">x_p</span><span class="p">)</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">getConstrByName</span><span class="p">(</span><span class="s2">&quot;X_p[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span>
+				<span class="c1"># print(m.getConstrByName(&quot;X_p[&quot;+str(i)+&quot;,&quot;+str(j)+&quot;]&quot;).lhs)</span>
+				<span class="c1"># print(int(m.getConstrByName(&quot;X_p&quot;+str(i)+&quot;,&quot;+str(j)).lhs))</span>
+				<span class="c1"># outf = open(base_path + base_file_name + str(i) + &quot;.soc&quot;, &#39;w&#39;)</span>
+				<span class="c1"># PreflibUtils.write_map(cmap, nvoter, rankmap_to_voteset(rmaps, rmapscounts),outf)</span>
+				<span class="c1"># outf.close()</span>
+				<span class="c1"># return -1</span>
+				<span class="k">return</span> <span class="p">{}</span>
+
+			<span class="c1"># add j approvals to candidates from group that are to be approved</span>
+			<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+				<span class="n">can</span> <span class="o">=</span> <span class="n">G</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+				<span class="n">solution</span><span class="p">[</span><span class="n">can</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+
+	<span class="k">return</span> <span class="n">solution</span></div>
+
+<div class="viewcode-block" id="ILP_optimistic"><a class="viewcode-back" href="../../index.html#maniplib.egalitarian.ILP_optimistic">[docs]</a><span class="k">def</span> <span class="nf">ILP_optimistic</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	creates and solves an ILP in one iteration</span>
+
+<span class="sd">	:param z: lowest possible score of a winning candidate (int)</span>
+<span class="sd">	:param p: number of promoted candidates, weaker than z, but still win (int)</span>
+<span class="sd">	:param b: number of border candidates, score exactly z (int)</span>
+<span class="sd">	:param r: number of candidates (int)</span>
+<span class="sd">	:param l: parameter of l-bloc rule (int)</span>
+<span class="sd">	:param candidates: list of each candidate&#39;s type</span>
+<span class="sd">	:param T: types, tuples of utility values (list)</span>
+<span class="sd">	:param scoremap: mapping from candidates to scores (dict)</span>
+
+<span class="sd">	:returns: number of approvals per candidate</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="c1"># compute C+ and C- again</span>
+	<span class="n">C_plus</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">]</span>
+	<span class="n">C_minus</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">z</span><span class="o">-</span><span class="n">r</span><span class="p">]</span>
+
+	<span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">&quot;egalitarian&quot;</span><span class="p">)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span> <span class="s1">&#39;OutputFlag&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+	<span class="c1"># disable presolving</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span> <span class="s1">&#39;Presolve&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+	<span class="c1"># create variables x_ij and x_ij+ for every type i and approvalnumber j</span>
+	<span class="c1"># x_ij are border, x_ij+ are promoted candidates</span>
+	<span class="n">X_p</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="n">GRB</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;X_p&quot;</span><span class="p">)</span>
+	<span class="n">X</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="n">GRB</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span>
+
+	<span class="c1"># how many approvals have to be spent to get p, b</span>
+	<span class="n">o</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">vtype</span><span class="o">=</span><span class="n">GRB</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+	<span class="c1"># how many remaining approvals have to be spent</span>
+	<span class="n">o_bar</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">vtype</span><span class="o">=</span><span class="n">GRB</span><span class="o">.</span><span class="n">INTEGER</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;o_bar&quot;</span><span class="p">)</span>
+
+	<span class="c1"># set constraints ensuring that values of x_ij are feasable</span>
+	<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">:</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">G</span> <span class="o">=</span> <span class="n">cand_in_group</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+			<span class="c1"># don&#39;t make more candidates b and p than are actually there (4)</span>
+			<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;X_p[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;]&quot;</span><span class="p">)</span>
+
+		<span class="n">G_0</span> <span class="o">=</span> <span class="n">cand_in_group</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">candidates</span><span class="p">)</span>
+
+		<span class="c1"># candidates with score z have to be p or b (7)</span>
+		<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">G_0</span><span class="p">))</span>
+
+		<span class="c1"># if r approvals are needed, candidate needs to be b (8)</span>
+		<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+	<span class="c1"># ensure that p and b many candidates are chosen (5),(6)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))])</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))])</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span>
+
+	<span class="c1"># set constraints needed for the manipulation (9)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">j</span> <span class="o">+</span> <span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))])</span> <span class="o">==</span> <span class="n">o</span><span class="p">)</span>
+	<span class="c1"># only lr votes can be spent (10)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">o</span> <span class="o">&lt;=</span> <span class="n">l</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+
+	<span class="c1"># set constraints needed for the distribution of the remaining approvals</span>
+	<span class="c1"># very big equation (11)</span>
+	<span class="n">safe_app</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">C_minus</span><span class="p">))</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">o_bar</span> <span class="o">&lt;=</span> <span class="n">safe_app</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">cand_in_group</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">j</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">candidates</span><span class="p">))</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))])</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">sum</span><span class="p">([</span><span class="n">X_p</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))]))</span>
+
+	<span class="c1"># sum of votes lr that have to be spent (12)</span>
+	<span class="n">m</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span><span class="n">o_bar</span><span class="o">+</span><span class="n">o</span> <span class="o">==</span> <span class="n">l</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+
+	<span class="n">m</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+
+	<span class="c1"># check if model is infeasible</span>
+	<span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">GRB</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span>
+		
+	<span class="k">return</span> <span class="n">get_candidate_indices</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">ILP_pessimistic</span><span class="p">():</span>
+	<span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="cand_in_group"><a class="viewcode-back" href="../../index.html#maniplib.egalitarian.cand_in_group">[docs]</a><span class="k">def</span> <span class="nf">cand_in_group</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">,</span> <span class="n">candidates</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	determine the members of a group G_i,j for given types and additional score j</span>
+
+<span class="sd">	:param t: type of a candidate (tuple)</span>
+<span class="sd">	:param j: group parameter (int)</span>
+<span class="sd">	:param z: lowest possible score of a winning candidate (int)</span>
+<span class="sd">	:param scoremap: mapping from candidates to scores (dict)</span>
+<span class="sd">	:param candidates: list of each candidate&#39;s type</span>
+
+<span class="sd">	:returns: candidates in the group</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">G</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="c1"># zip type list to tuples with their index</span>
+	<span class="n">index_list</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+	<span class="c1"># all candidate indices of type t</span>
+	<span class="n">cand_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">index_list</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">t</span><span class="p">]</span>
+
+	<span class="c1"># check if candidate has score z-j</span>
+	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cand_t</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="o">-</span><span class="n">j</span><span class="p">:</span>
+			<span class="n">G</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">G</span></div>
+
+<div class="viewcode-block" id="egalitarian_manipulation"><a class="viewcode-back" href="../../index.html#maniplib.egalitarian.egalitarian_manipulation">[docs]</a><span class="k">def</span> <span class="nf">egalitarian_manipulation</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">rankmaps</span><span class="p">,</span> <span class="n">utilities</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	finds a manipulation where remaining approvals can be distributed with egalitarian evaluation using ILP</span>
+
+<span class="sd">	:param l: parameter of l-bloc rule (int)</span>
+<span class="sd">	:param k: winning egroup size (int)</span>
+<span class="sd">	:param rankmaps: rankmaps of nonmanipulative votes</span>
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+
+<span class="sd">	:returns:</span>
+<span class="sd">		* **X** – dict of candidates to support, {candidate:numapprovals}</span>
+<span class="sd">		* **eval** – egalitarian value of winning max_S</span>
+<span class="sd">		* **S** – winning kegroup</span>
+<span class="sd">		* **replaced** – number of candidates replaced (int)</span>
+<span class="sd">	:rtype: tuple (X, eval, S, replaced)</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># prepare loop variables</span>
+	<span class="n">num_cand</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">utilities</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">score_map</span> <span class="o">=</span> <span class="n">get_score_map</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">rankmaps</span><span class="p">)</span>
+	<span class="n">min_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">score_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">max_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">score_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">+</span><span class="n">r</span>
+
+	<span class="c1"># init optimal k-egroup as empty</span>
+	<span class="n">max_S</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">max_ut</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">max_sol</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="c1"># lowest possible score of a winning candidate</span>
+	<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_score</span><span class="p">,</span> <span class="n">max_score</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+
+		<span class="c1"># candidates with a score higher than z</span>
+		<span class="n">C_plus</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">score_map</span> <span class="k">if</span> <span class="n">score_map</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">]</span>
+
+		<span class="c1"># skip this iteration if there are k or more candidates winning anyways</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">:</span>
+			<span class="k">continue</span>
+
+		<span class="c1"># number of promoted candidates (weaker than z, but still win)</span>
+		<span class="c1"># upper bound for p: C+ and one candidate with score z is needed</span>
+		<span class="c1"># winning: C+, p, some of b</span>
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)):</span>
+			<span class="c1"># number of border candidates (score exactly z)</span>
+			<span class="c1"># m-|C+|-p &gt;= b &gt;= k-|C+|-p</span>
+			<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span><span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="n">num_cand</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span><span class="o">-</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+
+				<span class="n">T</span><span class="p">,</span> <span class="n">T_count</span><span class="p">,</span> <span class="n">candidates</span> <span class="o">=</span> <span class="n">get_types</span><span class="p">(</span><span class="n">utilities</span><span class="p">)</span>
+
+				<span class="n">solution</span> <span class="o">=</span> <span class="n">ILP_optimistic</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">score_map</span><span class="p">)</span>
+
+				<span class="c1"># check if model is feasible</span>
+				<span class="k">if</span> <span class="n">solution</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="c1"># if solution == -1:</span>
+				<span class="c1"># 	return -1</span>
+
+				<span class="c1"># add manipulators approvals to scoremap to compute manipulative kegroup</span>
+				<span class="n">new_scoremap</span> <span class="o">=</span> <span class="n">merge_scoremaps</span><span class="p">(</span><span class="n">score_map</span><span class="p">,</span> <span class="n">solution</span><span class="p">)</span>
+				<span class="n">new_str</span> <span class="o">=</span> <span class="n">get_strength_order_lex</span><span class="p">(</span><span class="n">new_scoremap</span><span class="p">)</span>
+				<span class="n">S</span> <span class="o">=</span> <span class="n">new_str</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+
+				<span class="c1"># compute egalitarian value</span>
+				<span class="n">ut</span> <span class="o">=</span> <span class="n">egalitarian</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+				
+				<span class="c1"># check if solution has greater evaluation value</span>
+				<span class="k">if</span> <span class="n">ut</span> <span class="o">&gt;</span> <span class="n">max_ut</span><span class="p">:</span>
+					<span class="n">max_S</span> <span class="o">=</span> <span class="n">S</span>
+					<span class="n">max_ut</span> <span class="o">=</span> <span class="n">ut</span>
+					<span class="n">max_sol</span> <span class="o">=</span> <span class="n">solution</span>
+
+	<span class="c1"># check if manipulation results in change of kegroup</span>
+	<span class="n">strength_order</span> <span class="o">=</span> <span class="n">get_strength_order_lex</span><span class="p">(</span><span class="n">score_map</span><span class="p">)</span>
+	<span class="n">replaced</span> <span class="o">=</span> <span class="n">check_manipul</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">max_S</span><span class="p">,</span> <span class="n">strength_order</span><span class="p">)</span>
+
+	<span class="c1"># check if no solution was found</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">max_sol</span><span class="p">:</span>
+		<span class="n">max_S</span> <span class="o">=</span> <span class="n">strength_order</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+		<span class="n">max_ut</span> <span class="o">=</span> <span class="n">egalitarian</span><span class="p">(</span><span class="n">max_S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+		<span class="n">replaced</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="k">return</span> <span class="n">max_sol</span><span class="p">,</span> <span class="n">max_ut</span><span class="p">,</span> <span class="n">max_S</span><span class="p">,</span> <span class="n">replaced</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">ManipLib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">title</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Lydia Kalkbrenner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

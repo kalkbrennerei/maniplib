@@ -1,0 +1,427 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>maniplib.inconsistent_manipulation &#8212; ManipLib 2020 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for maniplib.inconsistent_manipulation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">maniplib.manipulation_utils</span> <span class="k">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="lex"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.lex">[docs]</a><span class="k">def</span> <span class="nf">lex</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	returns the candidate that wins lexicographic tie-breaking</span>
+
+<span class="sd">	:param a: candidate</span>
+<span class="sd">	:param b: candidate</span>
+
+<span class="sd">	:returns: candidate index that wins</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="k">if</span> <span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">a</span>
+	<span class="k">if</span> <span class="n">b</span><span class="o">&gt;</span><span class="n">a</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">b</span>
+	<span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="get_manip_kegroup"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.get_manip_kegroup">[docs]</a><span class="k">def</span> <span class="nf">get_manip_kegroup</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">,</span> <span class="n">X_res</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	calculates winning kegroup after manipulative votes casted according to X_res</span>
+
+<span class="sd">	:param z: score of this iteration&#39;s least preferred egroup member (int)</span>
+<span class="sd">	:param c: this iteration&#39;s least preferred egroup member index (int)</span>
+<span class="sd">	:param scoremap: scores for all candidates (dict)</span>
+<span class="sd">	:param X_res: optimal set of supported candidates for given c (list)</span>
+
+<span class="sd">	:returns: size-k set of co-winning candidates</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># strongest k-k_star candidates</span>
+	<span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">]</span>
+	<span class="n">S</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span> <span class="ow">and</span> <span class="n">lex</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">cand</span><span class="p">])</span>
+	<span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+	<span class="n">S</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">X_res</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">S</span></div>
+
+<div class="viewcode-block" id="compute_weights"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.compute_weights">[docs]</a><span class="k">def</span> <span class="nf">compute_weights</span><span class="p">(</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">C_star</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	computes weights according to approvals needed to get into kegroup</span>
+
+<span class="sd">	:param scoremap: scores for all candidates (dict)</span>
+<span class="sd">	:param z: score of this iteration&#39;s least preferred egroup member (int)</span>
+<span class="sd">	:param c: this iteration&#39;s least preferred egroup member index (int)</span>
+<span class="sd">	:param C_star: candidates to compute weights of (list)</span>
+
+<span class="sd">	:returns: weights of candidates</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">W</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">C_star</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">lex</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">c</span><span class="p">:</span>
+			<span class="c1"># candidate has to outperform c</span>
+			<span class="n">W</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># candidate wins according to tie-breaking</span>
+			<span class="n">W</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">])</span>
+
+	<span class="k">return</span> <span class="n">W</span></div>
+
+<div class="viewcode-block" id="distribute_remaining"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.distribute_remaining">[docs]</a><span class="k">def</span> <span class="nf">distribute_remaining</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">C_star</span><span class="p">,</span> <span class="n">s_star</span><span class="p">,</span> <span class="n">k_star</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">strength_order</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	distribute remaining votes on winning candidates, candidates that cannot win etc. to check if iteration is valid</span>
+
+<span class="sd">	:param r: number of manipulative votes (int)</span>
+<span class="sd">	:param C_star: candidates that can possibly join egroup (list)</span>
+<span class="sd">	:param s_star: number of approvals to be distributed (int)</span>
+<span class="sd">	:param k_star: number of remaining members of egroup (int)</span>
+<span class="sd">	:param W: weights of candidates (list)</span>
+<span class="sd">	:param X: supported candidates (list)</span>
+<span class="sd">	:param strength_order: ordering of the candidates according to nonmanipulative votes (list)</span>
+
+<span class="sd">	:returns: number of approvals that are impossible to distribute</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># remaining approvals after spending r approvals on each candidate from X</span>
+	<span class="n">remaining</span> <span class="o">=</span> <span class="n">s_star</span> <span class="o">-</span> <span class="n">r</span><span class="o">*</span><span class="n">k_star</span>
+	<span class="n">safe_cand</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">strength_order</span> <span class="k">if</span> <span class="n">cand</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">C_star</span><span class="p">]</span>
+
+	<span class="c1"># remaining approvals after spending r approvals on each candidate from C\C*</span>
+	<span class="n">remaining</span> <span class="o">-=</span> <span class="n">r</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">safe_cand</span><span class="p">)</span>
+
+	<span class="c1"># give one approval less than needed to candidates C*\X_res</span>
+	<span class="n">unapproved</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">if</span> <span class="n">W</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span>
+	<span class="n">remaining</span> <span class="o">-=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unapproved</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">remaining</span></div>
+
+
+<div class="viewcode-block" id="knapsack_parameters"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.knapsack_parameters">[docs]</a><span class="k">def</span> <span class="nf">knapsack_parameters</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	compute knapsack parameters</span>
+
+<span class="sd">	:param k: winning egroup size (int)</span>
+<span class="sd">	:param r: number of manipulative votes (int)</span>
+<span class="sd">	:param l: parameter of bloc-rule (int)</span>
+<span class="sd">	:param c: this iteration&#39;s least preferred egroup member index (int)</span>
+<span class="sd">	:param z: score of this iteration&#39;s least preferred egroup member (int)</span>
+<span class="sd">	:param scoremap: scores for all candidates (dict)</span>
+
+<span class="sd">	:returns: </span>
+<span class="sd">		* **k_star** – number of remaining members of egroup (int)</span>
+<span class="sd">		* **s_star** – number of approvals to be distributed (int)</span>
+<span class="sd">		* **C_star** – candidates that can possibly join egroup (list)</span>
+<span class="sd">	:rtype: tuple (k_star, s_star, C_star)</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="c1"># candidates that are k-egroup members anyways</span>
+	<span class="n">C_plus</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">]</span>
+	<span class="n">C_plus</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span> <span class="ow">and</span> <span class="n">lex</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">cand</span><span class="p">])</span>
+
+	<span class="c1"># check if choice of c is feasible</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+	<span class="c1"># compute additional approvals nedded for c</span>
+	<span class="n">s</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+	<span class="c1"># compute number of remaining candidates that need to join kegroup</span>
+	<span class="n">k_star</span> <span class="o">=</span> <span class="n">k</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">C_plus</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1"># compute remaining number of approvals that manipulators can give</span>
+	<span class="c1"># this will be knapsack capacity</span>
+	<span class="n">s_star</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">l</span> <span class="o">-</span> <span class="n">s</span>
+
+	<span class="c1"># select candidates that can possibly join kegroup</span>
+	<span class="c1"># this will be knapsack items</span>
+	<span class="n">C_remaining</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">scoremap</span> <span class="k">if</span> <span class="n">cand</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">C_plus</span> <span class="ow">and</span> <span class="n">cand</span> <span class="o">!=</span> <span class="n">c</span><span class="p">]</span>
+	<span class="n">C_star</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">C_remaining</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">z</span><span class="o">-</span><span class="n">r</span><span class="p">]</span>
+	<span class="n">C_star</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">C_remaining</span> <span class="k">if</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="o">==</span> <span class="n">z</span><span class="o">-</span><span class="n">r</span> <span class="ow">and</span> <span class="n">lex</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">cand</span><span class="p">])</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">C_star</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k_star</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+	<span class="k">return</span> <span class="n">k_star</span><span class="p">,</span> <span class="n">s_star</span><span class="p">,</span> <span class="n">C_star</span></div>
+
+<div class="viewcode-block" id="compute_efficiency"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.compute_efficiency">[docs]</a><span class="k">def</span> <span class="nf">compute_efficiency</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	computes efficiency of items in W and P</span>
+
+<span class="sd">	:param n: number of items (int)</span>
+<span class="sd">	:param W: item weights (list)</span>
+<span class="sd">	:param P: item values (list)</span>
+
+<span class="sd">	:returns: item indices ordered according to efficiency</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">eff</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+	<span class="n">eff</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">j</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">/</span><span class="n">W</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">eff</span></div>
+
+<div class="viewcode-block" id="approx"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.approx">[docs]</a><span class="k">def</span> <span class="nf">approx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	approximates the final value of ekp by taking the sum of the k highest weighted items</span>
+
+<span class="sd">	:param k: number of items in solution (int)</span>
+<span class="sd">	:param P: item values (list)</span>
+
+<span class="sd">	:returns: approximation value</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># sort item values descendingly</span>
+	<span class="n">P_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1"># sum up k highest values</span>
+	<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">P_sorted</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="e_kkp"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.e_kkp">[docs]</a><span class="k">def</span> <span class="nf">e_kkp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	solves the exact k-items Knapsack Problem by dynamic programming</span>
+
+<span class="sd">	:param n: number of items (int)</span>
+<span class="sd">	:param k: number of items in solution (int)</span>
+<span class="sd">	:param W: item weights (list)</span>
+<span class="sd">	:param P: item values (list)</span>
+<span class="sd">	:param c: weight constraint (int)</span>
+
+<span class="sd">	:returns: chosen items, None if no solution is possible</span>
+<span class="sd">	:rtype: list, None</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># determine upper bound for value by using knapsack approximation</span>
+	<span class="c1"># U = 2*H_KP(n, k, W, P, c)</span>
+	<span class="n">U</span> <span class="o">=</span> <span class="n">approx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+
+	<span class="c1"># initialize Y_0 with Y_0(0,0) = 0, other values are dummy values (above capacity)</span>
+	<span class="n">Y</span> <span class="o">=</span> <span class="p">[[</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">U</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+	<span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># initialize Y_1</span>
+	<span class="n">Y_j</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+	<span class="c1"># initialize data structure to remember chosen item indices</span>
+	<span class="n">chosen</span> <span class="o">=</span> <span class="p">[[[]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">U</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+	<span class="n">chosen_j</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">chosen</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+		<span class="c1"># Y_j has same values as Y at this point</span>
+
+		<span class="c1"># l is the number of chosen items</span>
+		<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+
+			<span class="c1"># guess summed value (P) of chosen items for l and j</span>
+			<span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">U</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+				<span class="c1"># compute new weight if item j would be added</span>
+				<span class="n">new</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]][</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">W</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+				<span class="c1"># check if new value is an improvement and less equal c</span>
+				<span class="k">if</span> <span class="n">Y</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">l</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">new</span><span class="p">:</span>
+					<span class="n">Y_j</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
+
+					<span class="c1"># remember which items where chosen</span>
+					<span class="n">chosen_j</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="p">]</span>
+					<span class="n">chosen_j</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">l</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">chosen</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]][</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+				<span class="c1"># if value is no improvement, value from iteration before stays</span>
+
+		<span class="c1"># prepare Y for the next iteration</span>
+		<span class="n">Y</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">Y_j</span><span class="p">)</span>
+		<span class="n">chosen</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">chosen_j</span><span class="p">)</span>
+
+	<span class="c1"># find maximum q such that weight is below constraint</span>
+	<span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">Y</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">chosen</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+
+	<span class="c1"># no solution found</span>
+	<span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="manipulation"><a class="viewcode-back" href="../../index.html#maniplib.inconsistent_manipulation.manipulation">[docs]</a><span class="k">def</span> <span class="nf">manipulation</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">non_manip_rankmaps</span><span class="p">,</span> <span class="n">utilities</span><span class="p">,</span> <span class="n">eval_f</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	finds an l-Bloc manipulation for utilitarian and candidate-wise egalitarian evaluation</span>
+
+<span class="sd">	:param l: parameter of l-bloc rule (int)</span>
+<span class="sd">	:param k: winning egroup size (int)</span>
+<span class="sd">	:param non_manip_rankmaps: preflib format for voters rankings (list of dicts)</span>
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+<span class="sd">	:param eval_f: evaluation function (function)</span>
+
+<span class="sd">	:returns:</span>
+<span class="sd">		* **X** – set of candidates that should be suported, not necessarily size l (list)</span>
+<span class="sd">		* **eval** – value of eval_f of winning max_S (int)</span>
+<span class="sd">		* **S** – winning kegroup (list)</span>
+<span class="sd">		* **replaced** – number of candidates replaced (int)</span>
+<span class="sd">	:rtype: tuple (X, eval, S, replaced)</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># manipulator&#39;s count</span>
+	<span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">utilities</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+	<span class="c1"># determine strength order</span>
+	<span class="n">scoremap</span> <span class="o">=</span> <span class="n">get_score_map</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">non_manip_rankmaps</span><span class="p">)</span>
+
+	<span class="n">strength_order</span> <span class="o">=</span> <span class="n">get_strength_order_lex</span><span class="p">(</span><span class="n">scoremap</span><span class="p">)</span>
+
+	<span class="c1"># prepare search for max utility</span>
+	<span class="n">max_eval</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">max_X</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">max_S</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="n">value_map</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">utilities</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">value_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_f</span><span class="p">([</span><span class="n">i</span><span class="p">],</span> <span class="n">utilities</span><span class="p">)</span>
+
+	<span class="c1"># fix candidate index for c, the least prefered member of the k-egroup</span>
+	<span class="c1"># at most r*l candidates can be supported by the manipulators, k candidates have to be considered anyways</span>
+	<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">strength_order</span><span class="p">[:</span><span class="n">k</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">l</span><span class="p">]:</span>
+
+		<span class="c1"># fix final score of c</span>
+		<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scoremap</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">scoremap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">+</span><span class="n">r</span><span class="p">):</span>
+
+			<span class="c1"># determine knapsack parameters</span>
+			<span class="n">k_star</span><span class="p">,</span> <span class="n">s_star</span><span class="p">,</span> <span class="n">C_star</span> <span class="o">=</span> <span class="n">knapsack_parameters</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">)</span>
+
+			<span class="c1"># check if choice of c is feasable</span>
+			<span class="k">if</span> <span class="n">C_star</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+			<span class="c1"># knapsack only has to be comuted if candidates still have to be added</span>
+			<span class="k">if</span> <span class="n">k_star</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="c1"># determine item&#39;s values by evaluation function</span>
+				<span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="n">value_map</span><span class="p">[</span><span class="n">cand</span><span class="p">]</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">C_star</span><span class="p">]</span>
+
+				<span class="c1"># weight is number of approvals needed to be in kegroup</span>
+				<span class="n">W</span> <span class="o">=</span> <span class="n">compute_weights</span><span class="p">(</span><span class="n">scoremap</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">C_star</span><span class="p">)</span>
+
+				<span class="c1"># compute exact k-item knapsack</span>
+				<span class="n">X</span> <span class="o">=</span> <span class="n">e_kkp</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">C_star</span><span class="p">),</span> <span class="n">k_star</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">s_star</span><span class="p">)</span>
+
+				<span class="c1"># check if knapsack is feasable</span>
+				<span class="k">if</span> <span class="n">X</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="n">X_res</span> <span class="o">=</span> <span class="p">[</span><span class="n">C_star</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span>
+
+
+				<span class="c1"># check if remaining approvals can be distributed</span>
+				<span class="k">if</span> <span class="n">distribute_remaining</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">C_star</span><span class="p">,</span> <span class="n">s_star</span><span class="p">,</span> <span class="n">k_star</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">strength_order</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="c1"># determine manipulators satisfaction</span>
+				<span class="n">S</span> <span class="o">=</span> <span class="n">get_manip_kegroup</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">scoremap</span><span class="p">,</span> <span class="n">X_res</span><span class="p">)</span>
+
+			<span class="c1"># in this case this case no candidates get replaced</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">S</span> <span class="o">=</span> <span class="n">strength_order</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+				<span class="c1"># vote for all winning candidates</span>
+				<span class="n">X_res</span> <span class="o">=</span> <span class="n">S</span>
+
+			<span class="n">eval_v</span> <span class="o">=</span> <span class="n">eval_f</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">)</span>
+
+			<span class="c1"># check if manipulators&#39; satisfaction is maximal</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">eval_v</span> <span class="o">&gt;</span> <span class="n">max_eval</span><span class="p">):</span>
+				<span class="n">max_eval</span> <span class="o">=</span> <span class="n">eval_v</span>
+				<span class="n">max_X</span> <span class="o">=</span> <span class="n">X_res</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+				<span class="n">max_S</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+	<span class="c1"># check if manipulation results in change of kegroup</span>
+	<span class="n">replaced</span> <span class="o">=</span> <span class="n">check_manipul</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">max_S</span><span class="p">,</span> <span class="n">strength_order</span><span class="p">)</span>
+
+	<span class="c1"># return X that maximizes manipulators satisfaction</span>
+	<span class="k">return</span> <span class="n">max_X</span><span class="p">,</span> <span class="n">max_eval</span><span class="p">,</span> <span class="n">max_S</span><span class="p">,</span> <span class="n">replaced</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">ManipLib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">title</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Lydia Kalkbrenner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

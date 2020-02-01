@@ -1,0 +1,38 @@
+.. ManipLib documentation master file, created by
+   sphinx-quickstart on Sat Feb  1 17:46:06 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to ManipLib's documentation!
+====================================
+
+.. automodule:: maniplib.consistent_manipulation
+   :members:
+
+.. automodule:: maniplib.egalitarian
+   :members:
+
+.. automodule:: maniplib.inconsistent_manipulation
+   :members:
+
+.. automodule:: maniplib.data_preparation
+   :members:
+
+.. automodule:: maniplib.manipulation_utils
+   :members:
+
+.. automodule:: maniplib.tie_breaking
+   :members:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   includeme
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

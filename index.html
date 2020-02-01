@@ -1,0 +1,1066 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to ManipLib’s documentation! &#8212; ManipLib 2020 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="title" href="includeme.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-maniplib.consistent_manipulation">
+<span id="welcome-to-maniplib-s-documentation"></span><h1>Welcome to ManipLib’s documentation!<a class="headerlink" href="#module-maniplib.consistent_manipulation" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.consistent_manipulation">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">consistent_manipulation</code><span class="sig-paren">(</span><em>l</em>, <em>k</em>, <em>non_manip_rankmaps</em>, <em>utilities</em>, <em>eval_f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#consistent_manipulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.consistent_manipulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds a manipulation where manipulators vote consistently (if there is any)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>non_manip_rankmaps</strong> – rankmaps of nonmanipulative votes</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>eval_f</strong> – evaluation function (finction)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>X</strong> – list of l candidates that the manipulators have to support</li>
+<li><strong>eval</strong> – evaluation value of the winning group</li>
+<li><strong>S</strong> – is the winning group under manipulation</li>
+<li><strong>replaced</strong> – is the number of candidates exchanged from the nonmanipulative group</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple (X, eval, S, replaced)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.get_distinguished_cand">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">get_distinguished_cand</code><span class="sig-paren">(</span><em>c</em>, <em>r</em>, <em>l</em>, <em>non_manip_rankmaps</em>, <em>strength_order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#get_distinguished_cand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.get_distinguished_cand" title="Permalink to this definition">¶</a></dt>
+<dd><p>get candidates that can be stronger than c by adding r manipulative votes ordered by strength</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>c</strong> – dropped candidate index (int)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>non_manip_rankmaps</strong> – preflib format for voters rankings (list of dicts)</li>
+<li><strong>strength_order</strong> – ordering of the candidates according to nonmanipulative votes (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">distinguished candidates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.get_manip_kegroup">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">get_manip_kegroup</code><span class="sig-paren">(</span><em>r</em>, <em>k</em>, <em>X</em>, <em>l</em>, <em>non_manip_rankmaps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#get_manip_kegroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.get_manip_kegroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates winning kegroup after manipulative votes casted consistently according to X (needed to compute manipulators utility)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> – number of manipulative votes (int)</li>
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>X</strong> – optimal set of supported candidates for given t of kept candidates (list)</li>
+<li><strong>l</strong> – parameter of bloc-rule (int)</li>
+<li><strong>non_manip_rankmaps</strong> – preflib format for voters rankings (list of dicts)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">size-k set of co-winning candidates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.get_most_valuable">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">get_most_valuable</code><span class="sig-paren">(</span><em>n</em>, <em>utilities</em>, <em>D</em>, <em>eval_f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#get_most_valuable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.get_most_valuable" title="Permalink to this definition">¶</a></dt>
+<dd><p>extracts n most valuable candidates according to the evaluation function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> – number of most valuable caniddates to be extracted (int)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>D</strong> – candidate indices to extract from (list)</li>
+<li><strong>eval_f</strong> – evaluation function (function)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">most valuable candidates indices</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.get_p">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">get_p</code><span class="sig-paren">(</span><em>k</em>, <em>diff</em>, <em>X</em>, <em>strength_order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#get_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.get_p" title="Permalink to this definition">¶</a></dt>
+<dd><p>determine how many candidates get “kicked out” if adding weakest candidates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>diff</strong> – how many candidates needed to complete l votes (int)</li>
+<li><strong>X</strong> – optimal set of supported candidates for given t of kept candidates (list)</li>
+<li><strong>strength_order</strong> – ordering of the candidates according to nonmanipulative votes (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number of candidates “kicked out”</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.consistent_manipulation.optimal_supported_cand">
+<code class="descclassname">maniplib.consistent_manipulation.</code><code class="descname">optimal_supported_cand</code><span class="sig-paren">(</span><em>k</em>, <em>l</em>, <em>t</em>, <em>D</em>, <em>strength_order</em>, <em>utilities</em>, <em>eval_f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/consistent_manipulation.html#optimal_supported_cand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.consistent_manipulation.optimal_supported_cand" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds an optimal supported candidate set for a given t of kept candidates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>t</strong> – number of kept candidates (int)</li>
+<li><strong>D</strong> – set of distinguished candidates (list)</li>
+<li><strong>strength_order</strong> – ordering of the candidates according to nonmanipulative votes (list)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>eval_f</strong> – evaluation function e.g. utilitarian (function)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">optimal set of supported candidates for given t of kept candidates (list)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-maniplib.egalitarian"></span><dl class="function">
+<dt id="maniplib.egalitarian.ILP_optimistic">
+<code class="descclassname">maniplib.egalitarian.</code><code class="descname">ILP_optimistic</code><span class="sig-paren">(</span><em>z</em>, <em>p</em>, <em>b</em>, <em>r</em>, <em>l</em>, <em>candidates</em>, <em>T</em>, <em>scoremap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/egalitarian.html#ILP_optimistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.egalitarian.ILP_optimistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates and solves an ILP in one iteration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>z</strong> – lowest possible score of a winning candidate (int)</li>
+<li><strong>p</strong> – number of promoted candidates, weaker than z, but still win (int)</li>
+<li><strong>b</strong> – number of border candidates, score exactly z (int)</li>
+<li><strong>r</strong> – number of candidates (int)</li>
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>candidates</strong> – list of each candidate’s type</li>
+<li><strong>T</strong> – types, tuples of utility values (list)</li>
+<li><strong>scoremap</strong> – mapping from candidates to scores (dict)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number of approvals per candidate</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.egalitarian.cand_in_group">
+<code class="descclassname">maniplib.egalitarian.</code><code class="descname">cand_in_group</code><span class="sig-paren">(</span><em>t</em>, <em>j</em>, <em>z</em>, <em>scoremap</em>, <em>candidates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/egalitarian.html#cand_in_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.egalitarian.cand_in_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>determine the members of a group G_i,j for given types and additional score j</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>t</strong> – type of a candidate (tuple)</li>
+<li><strong>j</strong> – group parameter (int)</li>
+<li><strong>z</strong> – lowest possible score of a winning candidate (int)</li>
+<li><strong>scoremap</strong> – mapping from candidates to scores (dict)</li>
+<li><strong>candidates</strong> – list of each candidate’s type</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">candidates in the group</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.egalitarian.egalitarian_manipulation">
+<code class="descclassname">maniplib.egalitarian.</code><code class="descname">egalitarian_manipulation</code><span class="sig-paren">(</span><em>l</em>, <em>k</em>, <em>r</em>, <em>rankmaps</em>, <em>utilities</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/egalitarian.html#egalitarian_manipulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.egalitarian.egalitarian_manipulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds a manipulation where remaining approvals can be distributed with egalitarian evaluation using ILP</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>rankmaps</strong> – rankmaps of nonmanipulative votes</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>X</strong> – dict of candidates to support, {candidate:numapprovals}</li>
+<li><strong>eval</strong> – egalitarian value of winning max_S</li>
+<li><strong>S</strong> – winning kegroup</li>
+<li><strong>replaced</strong> – number of candidates replaced (int)</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple (X, eval, S, replaced)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.egalitarian.get_candidate_indices">
+<code class="descclassname">maniplib.egalitarian.</code><code class="descname">get_candidate_indices</code><span class="sig-paren">(</span><em>m</em>, <em>T</em>, <em>r</em>, <em>z</em>, <em>candidates</em>, <em>scoremap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/egalitarian.html#get_candidate_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.egalitarian.get_candidate_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>get approved candidate indices and amount of approvals from group counts</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>m</strong> – number of candidates (int)</li>
+<li><strong>T</strong> – types, tuples of utility values (list)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>z</strong> – lowest possible score of a winning candidate (int)</li>
+<li><strong>candidates</strong> – list of each candidate’s type</li>
+<li><strong>scoremap</strong> – mapping from candidates to scores (dict)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number of approvals per candidate</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.egalitarian.merge_scoremaps">
+<code class="descclassname">maniplib.egalitarian.</code><code class="descname">merge_scoremaps</code><span class="sig-paren">(</span><em>scoremap</em>, <em>solution</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/egalitarian.html#merge_scoremaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.egalitarian.merge_scoremaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>merge manipulative approvals and unmanipulative scoremap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>scoremap</strong> – mapping from candidates to scores (dict)</li>
+<li><strong>solution</strong> – number of approvals per candidate (dict)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mapping from candidates to manipulative scores</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-maniplib.inconsistent_manipulation"></span><dl class="function">
+<dt id="maniplib.inconsistent_manipulation.approx">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">approx</code><span class="sig-paren">(</span><em>k</em>, <em>P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#approx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.approx" title="Permalink to this definition">¶</a></dt>
+<dd><p>approximates the final value of ekp by taking the sum of the k highest weighted items</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – number of items in solution (int)</li>
+<li><strong>P</strong> – item values (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">approximation value</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.compute_efficiency">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">compute_efficiency</code><span class="sig-paren">(</span><em>n</em>, <em>W</em>, <em>P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#compute_efficiency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.compute_efficiency" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes efficiency of items in W and P</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> – number of items (int)</li>
+<li><strong>W</strong> – item weights (list)</li>
+<li><strong>P</strong> – item values (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">item indices ordered according to efficiency</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.compute_weights">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">compute_weights</code><span class="sig-paren">(</span><em>scoremap</em>, <em>z</em>, <em>c</em>, <em>C_star</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#compute_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.compute_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes weights according to approvals needed to get into kegroup</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>scoremap</strong> – scores for all candidates (dict)</li>
+<li><strong>z</strong> – score of this iteration’s least preferred egroup member (int)</li>
+<li><strong>c</strong> – this iteration’s least preferred egroup member index (int)</li>
+<li><strong>C_star</strong> – candidates to compute weights of (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">weights of candidates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.distribute_remaining">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">distribute_remaining</code><span class="sig-paren">(</span><em>r</em>, <em>C_star</em>, <em>s_star</em>, <em>k_star</em>, <em>W</em>, <em>X</em>, <em>strength_order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#distribute_remaining"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.distribute_remaining" title="Permalink to this definition">¶</a></dt>
+<dd><p>distribute remaining votes on winning candidates, candidates that cannot win etc. to check if iteration is valid</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> – number of manipulative votes (int)</li>
+<li><strong>C_star</strong> – candidates that can possibly join egroup (list)</li>
+<li><strong>s_star</strong> – number of approvals to be distributed (int)</li>
+<li><strong>k_star</strong> – number of remaining members of egroup (int)</li>
+<li><strong>W</strong> – weights of candidates (list)</li>
+<li><strong>X</strong> – supported candidates (list)</li>
+<li><strong>strength_order</strong> – ordering of the candidates according to nonmanipulative votes (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number of approvals that are impossible to distribute</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.e_kkp">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">e_kkp</code><span class="sig-paren">(</span><em>n</em>, <em>k</em>, <em>W</em>, <em>P</em>, <em>c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#e_kkp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.e_kkp" title="Permalink to this definition">¶</a></dt>
+<dd><p>solves the exact k-items Knapsack Problem by dynamic programming</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> – number of items (int)</li>
+<li><strong>k</strong> – number of items in solution (int)</li>
+<li><strong>W</strong> – item weights (list)</li>
+<li><strong>P</strong> – item values (list)</li>
+<li><strong>c</strong> – weight constraint (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">chosen items, None if no solution is possible</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list, None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.get_manip_kegroup">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">get_manip_kegroup</code><span class="sig-paren">(</span><em>z</em>, <em>c</em>, <em>scoremap</em>, <em>X_res</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#get_manip_kegroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.get_manip_kegroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates winning kegroup after manipulative votes casted according to X_res</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>z</strong> – score of this iteration’s least preferred egroup member (int)</li>
+<li><strong>c</strong> – this iteration’s least preferred egroup member index (int)</li>
+<li><strong>scoremap</strong> – scores for all candidates (dict)</li>
+<li><strong>X_res</strong> – optimal set of supported candidates for given c (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">size-k set of co-winning candidates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.knapsack_parameters">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">knapsack_parameters</code><span class="sig-paren">(</span><em>k</em>, <em>r</em>, <em>l</em>, <em>c</em>, <em>z</em>, <em>scoremap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#knapsack_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.knapsack_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute knapsack parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>r</strong> – number of manipulative votes (int)</li>
+<li><strong>l</strong> – parameter of bloc-rule (int)</li>
+<li><strong>c</strong> – this iteration’s least preferred egroup member index (int)</li>
+<li><strong>z</strong> – score of this iteration’s least preferred egroup member (int)</li>
+<li><strong>scoremap</strong> – scores for all candidates (dict)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>k_star</strong> – number of remaining members of egroup (int)</li>
+<li><strong>s_star</strong> – number of approvals to be distributed (int)</li>
+<li><strong>C_star</strong> – candidates that can possibly join egroup (list)</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple (k_star, s_star, C_star)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.lex">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">lex</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#lex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.lex" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the candidate that wins lexicographic tie-breaking</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> – candidate</li>
+<li><strong>b</strong> – candidate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">candidate index that wins</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.inconsistent_manipulation.manipulation">
+<code class="descclassname">maniplib.inconsistent_manipulation.</code><code class="descname">manipulation</code><span class="sig-paren">(</span><em>l</em>, <em>k</em>, <em>non_manip_rankmaps</em>, <em>utilities</em>, <em>eval_f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/inconsistent_manipulation.html#manipulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.inconsistent_manipulation.manipulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>finds an l-Bloc manipulation for utilitarian and candidate-wise egalitarian evaluation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong> – parameter of l-bloc rule (int)</li>
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>non_manip_rankmaps</strong> – preflib format for voters rankings (list of dicts)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>eval_f</strong> – evaluation function (function)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>X</strong> – set of candidates that should be suported, not necessarily size l (list)</li>
+<li><strong>eval</strong> – value of eval_f of winning max_S (int)</li>
+<li><strong>S</strong> – winning kegroup (list)</li>
+<li><strong>replaced</strong> – number of candidates replaced (int)</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple (X, eval, S, replaced)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-maniplib.data_preparation"></span><dl class="function">
+<dt id="maniplib.data_preparation.dataset_from_file">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">dataset_from_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#dataset_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.dataset_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>read a dataset from a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – path to the data ressource file confroming to the specified format (str)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>candmap</strong> – mapping from candidate indices to candidate names (dict)</li>
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter, duplicates removed (list of dicts)</li>
+<li><strong>numvoters</strong> – number of voters (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple (candmap, rankmaps, numvoters)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.dataset_from_url">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">dataset_from_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#dataset_from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.dataset_from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>read a dataset from an url</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> – adress of the data ressource conforming to the specified format (str)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>candmap</strong> – mapping from candidate indices to candidate names (dict)</li>
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter, duplicates removed (list of dicts)</li>
+<li><strong>numvoters</strong> – number of voters (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple (candmap, rankmaps, rankmapcounts)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.get_nonmanipulative_votes">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">get_nonmanipulative_votes</code><span class="sig-paren">(</span><em>rankmaps</em>, <em>utilities</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#get_nonmanipulative_votes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.get_nonmanipulative_votes" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes manipulative votes from manipulator’s utilities from rankmaps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter (list of dicts)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">candidate to rank mapping per voter without manipulators</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of dicts</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.merge_rankmap_counts">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">merge_rankmap_counts</code><span class="sig-paren">(</span><em>rankmaps</em>, <em>rankmapcounts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#merge_rankmap_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.merge_rankmap_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>merge rankmaps and it’s count into one list where duplicates are allowed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter, duplicates removed (list of dicts)</li>
+<li><strong>rankmapcounts</strong> – keeping track of duplicates</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">merged rankmaps and rankmapcounts in preflib data format</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.utilities_borda">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">utilities_borda</code><span class="sig-paren">(</span><em>rankmaps</em>, <em>r</em>, <em>numcandidates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#utilities_borda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.utilities_borda" title="Permalink to this definition">¶</a></dt>
+<dd><p>select the first r voters from the rankmap as manipulators and extract their utilities by borda rule
+voter_index is relative to rankmaps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter (list of dicts)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>numcandidates</strong> – number of candidates (int))</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">manipulators utilities {manipulator_index:utility}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.utilities_borda_random">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">utilities_borda_random</code><span class="sig-paren">(</span><em>rankmaps</em>, <em>r</em>, <em>numcandidates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#utilities_borda_random"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.utilities_borda_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>select the r random voters from the rankmap as manipulators and extract their utilities by borda rule
+voter_index is relative to rankmaps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter (list of dicts)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>numcandidates</strong> – number of candidates (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">manipulators utilities {manipulator_index:utility}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.data_preparation.utilities_borda_random_udiff">
+<code class="descclassname">maniplib.data_preparation.</code><code class="descname">utilities_borda_random_udiff</code><span class="sig-paren">(</span><em>rankmaps</em>, <em>r</em>, <em>numcandidates</em>, <em>udiff</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/data_preparation.html#utilities_borda_random_udiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.data_preparation.utilities_borda_random_udiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>select the r random voters from the rankmap as manipulators and extract their utilities by borda rule using udiff different utility values
+voter_index is relative to rankmaps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rankmaps</strong> – candidate to rank mapping per voter (list of dicts)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>numcandidates</strong> – number of candidates (int)</li>
+<li><strong>udiff</strong> – number of different utility values (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">manipulators utilities {manipulator_index:utility}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-maniplib.manipulation_utils"></span><dl class="function">
+<dt id="maniplib.manipulation_utils.candegal">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">candegal</code><span class="sig-paren">(</span><em>S</em>, <em>utilities</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#candegal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.candegal" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates elected kegroup for manipulators by candidate-wise egalitarian function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>S</strong> – choice of candidates in kegroup (list)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">utilitarian value</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.check_manipul">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">check_manipul</code><span class="sig-paren">(</span><em>k</em>, <em>max_S</em>, <em>strength_order</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#check_manipul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.check_manipul" title="Permalink to this definition">¶</a></dt>
+<dd><p>counts how many candidates get exchanged after manipulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – winning egroup size (int)</li>
+<li><strong>max_S</strong> – winning kegroup that maximizes manipulator’s satisfaction</li>
+<li><strong>strength_order</strong> – ordering of the candidates according to nonmanipulative votes (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number of candidates exchanged</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.egalitarian">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">egalitarian</code><span class="sig-paren">(</span><em>S</em>, <em>utilities</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#egalitarian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.egalitarian" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates elected kegroup for manipulators by egalitarian function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>S</strong> – choice of candidates in kegroup (list)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>r</strong> – number of manipulators</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">utilitarian value</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.get_score_map">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">get_score_map</code><span class="sig-paren">(</span><em>l</em>, <em>rankmaps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#get_score_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.get_score_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates scores for all candidates according to l-bloc rule and votes casted in rankmaps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong> – paramenter of l-bloc-rule (int)</li>
+<li><strong>rankmaps</strong> – preflib data structure for voters preferences (list of dicts)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">candidates and their scores</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.get_strength_order_lex">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">get_strength_order_lex</code><span class="sig-paren">(</span><em>scoremap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#get_strength_order_lex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.get_strength_order_lex" title="Permalink to this definition">¶</a></dt>
+<dd><p>sort candidates according to voters preferences and lex_tb</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scoremap</strong> – mapping from candidates to scores (dict)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">candidate indices, strongest candidates in the front</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.get_types">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">get_types</code><span class="sig-paren">(</span><em>utilities</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#get_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.get_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>get type data structures needed for tie breaking algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>T</strong> – types, tuples of utility values (list)</li>
+<li><strong>T_count</strong> – for every type in T T_count has the number of candidates</li>
+<li><strong>candidates</strong> – list of each candidate’s type</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple (T, T_count, candidates)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.manipulation_utils.utilitarian">
+<code class="descclassname">maniplib.manipulation_utils.</code><code class="descname">utilitarian</code><span class="sig-paren">(</span><em>S</em>, <em>utilities</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/manipulation_utils.html#utilitarian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.manipulation_utils.utilitarian" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates elected kegroup for manipulators by utilitarian function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>S</strong> – choice of candidates in kegroup (list)</li>
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">utilitarian value</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-maniplib.tie_breaking"></span><dl class="function">
+<dt id="maniplib.tie_breaking.egal_opt">
+<code class="descclassname">maniplib.tie_breaking.</code><code class="descname">egal_opt</code><span class="sig-paren">(</span><em>utilities</em>, <em>r</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/tie_breaking.html#egal_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.tie_breaking.egal_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>egalitarian optimistic tie-breaking</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>utilities</strong> – manipulators utilities {manipulator_index:utility} (list)</li>
+<li><strong>r</strong> – number of manipulators (int)</li>
+<li><strong>k</strong> – egroup-size (int)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">winning candidate indices from utilities</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="maniplib.tie_breaking.get_candidate_indices">
+<code class="descclassname">maniplib.tie_breaking.</code><code class="descname">get_candidate_indices</code><span class="sig-paren">(</span><em>T</em>, <em>candidates</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/maniplib/tie_breaking.html#get_candidate_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#maniplib.tie_breaking.get_candidate_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>get a list of candidates indicies from optimized model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>T</strong> – types, tuples of utility values (list)</li>
+<li><strong>candidates</strong> – all candidate indices (list)</li>
+<li><strong>m</strong> – model</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">candidate indices</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">title</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">ManipLib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">title</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="includeme.html" title="next chapter">title</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Lydia Kalkbrenner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

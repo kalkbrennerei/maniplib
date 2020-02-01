@@ -1,7 +1,0 @@
-_build/
-_static/
-_templates/
-conf.py
-index.rst
-Makefile
-maniplib/__pycache__/

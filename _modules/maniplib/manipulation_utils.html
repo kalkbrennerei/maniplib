@@ -1,0 +1,265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>maniplib.manipulation_utils &#8212; ManipLib 2020 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for maniplib.manipulation_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="get_score_map"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.get_score_map">[docs]</a><span class="k">def</span> <span class="nf">get_score_map</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">rankmaps</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	calculates scores for all candidates according to l-bloc rule and votes casted in rankmaps</span>
+
+<span class="sd">	:param l: paramenter of l-bloc-rule (int)</span>
+<span class="sd">	:param rankmaps: preflib data structure for voters preferences (list of dicts)</span>
+
+<span class="sd">	:returns: candidates and their scores</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># init scoremap</span>
+	<span class="n">scoremap</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">voter</span> <span class="ow">in</span> <span class="n">rankmaps</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">voter</span><span class="p">:</span>
+			<span class="n">scoremap</span><span class="p">[</span><span class="n">can</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># sum up every candidate&#39;s score</span>
+	<span class="k">for</span> <span class="n">voter</span> <span class="ow">in</span> <span class="n">rankmaps</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">voter</span><span class="p">:</span>
+			<span class="c1"># check if candidate is in voters l highest preferences</span>
+			<span class="k">if</span> <span class="n">voter</span><span class="p">[</span><span class="n">can</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">l</span><span class="p">:</span>
+				<span class="n">scoremap</span><span class="p">[</span><span class="n">can</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">scoremap</span></div>
+
+<div class="viewcode-block" id="get_strength_order_lex"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.get_strength_order_lex">[docs]</a><span class="k">def</span> <span class="nf">get_strength_order_lex</span><span class="p">(</span><span class="n">scoremap</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	sort candidates according to voters preferences and lex_tb</span>
+
+<span class="sd">	:param scoremap: mapping from candidates to scores (dict)</span>
+
+<span class="sd">	:returns: candidate indices, strongest candidates in the front</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">strength_order</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="c1"># sort scores descending</span>
+	<span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">scoremap</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+	<span class="n">scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1"># check how many candidates with the same score exist</span>
+	<span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+		<span class="n">same_score</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">xy</span> <span class="p">:</span> <span class="n">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">score</span><span class="p">,</span> <span class="n">scoremap</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">same_score</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">strength_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">same_score</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># perform tie-breaking for more than one candidate with the same score</span>
+			<span class="c1"># sort by index for lexicographic tie-breaking</span>
+			<span class="n">tb</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">same_score</span><span class="p">])</span>
+			<span class="n">strength_order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">strength_order</span></div>
+
+<div class="viewcode-block" id="utilitarian"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.utilitarian">[docs]</a><span class="k">def</span> <span class="nf">utilitarian</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	evaluates elected kegroup for manipulators by utilitarian function</span>
+
+<span class="sd">	:param S: choice of candidates in kegroup (list)</span>
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+
+<span class="sd">	:returns: utilitarian value</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># sum up all manipulator&#39;s utility values for candidates in S</span>
+	<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+		<span class="n">utility</span> <span class="o">=</span> <span class="n">utilities</span><span class="p">[</span><span class="n">can</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">manip</span> <span class="ow">in</span> <span class="n">utility</span><span class="p">:</span>
+			<span class="n">result</span><span class="o">+=</span> <span class="n">utility</span><span class="p">[</span><span class="n">manip</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="candegal"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.candegal">[docs]</a><span class="k">def</span> <span class="nf">candegal</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	evaluates elected kegroup for manipulators by candidate-wise egalitarian function</span>
+
+<span class="sd">	:param S: choice of candidates in kegroup (list)</span>
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+
+<span class="sd">	:returns: utilitarian value</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># scan utilities for manipulator that gains least utility from a candidate</span>
+	<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+		<span class="n">utility</span> <span class="o">=</span> <span class="n">utilities</span><span class="p">[</span><span class="n">can</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">min_ut</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span>
+		<span class="k">for</span> <span class="n">manip</span> <span class="ow">in</span> <span class="n">utility</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">utility</span><span class="p">[</span><span class="n">manip</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_ut</span><span class="p">:</span>
+				<span class="n">min_ut</span> <span class="o">=</span> <span class="n">utility</span><span class="p">[</span><span class="n">manip</span><span class="p">]</span>
+		<span class="c1"># sum up minimum utilities</span>
+		<span class="n">result</span><span class="o">+=</span> <span class="n">min_ut</span>
+
+	<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="egalitarian"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.egalitarian">[docs]</a><span class="k">def</span> <span class="nf">egalitarian</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">utilities</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	evaluates elected kegroup for manipulators by egalitarian function</span>
+
+<span class="sd">	:param S: choice of candidates in kegroup (list)</span>
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+<span class="sd">	:param r: number of manipulators</span>
+
+<span class="sd">	:returns: utilitarian value</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">ut</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># compute manipulators utilities</span>
+	<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+		<span class="n">utility</span> <span class="o">=</span> <span class="n">utilities</span><span class="p">[</span><span class="n">can</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">manip</span> <span class="ow">in</span> <span class="n">utility</span><span class="p">:</span>
+			<span class="n">ut</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">utility</span><span class="p">[</span><span class="n">manip</span><span class="p">])</span>
+
+	<span class="c1"># determine least satisfied manipulator</span>
+	<span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">ut</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="check_manipul"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.check_manipul">[docs]</a><span class="k">def</span> <span class="nf">check_manipul</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">max_S</span><span class="p">,</span> <span class="n">strength_order</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	counts how many candidates get exchanged after manipulation</span>
+
+<span class="sd">	:param k: winning egroup size (int)</span>
+<span class="sd">	:param max_S: winning kegroup that maximizes manipulator&#39;s satisfaction</span>
+<span class="sd">	:param strength_order: ordering of the candidates according to nonmanipulative votes (list)</span>
+
+<span class="sd">	:returns: number of candidates exchanged</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="n">exchanged</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1"># find differences between manipulative winners and nonmanipulative winners</span>
+	<span class="k">for</span> <span class="n">can</span> <span class="ow">in</span> <span class="n">max_S</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">can</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">strength_order</span><span class="p">[:</span><span class="n">k</span><span class="p">]:</span>
+			<span class="n">exchanged</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">exchanged</span></div>
+
+<div class="viewcode-block" id="get_types"><a class="viewcode-back" href="../../index.html#maniplib.manipulation_utils.get_types">[docs]</a><span class="k">def</span> <span class="nf">get_types</span><span class="p">(</span><span class="n">utilities</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	get type data structures needed for tie breaking algorithm</span>
+
+<span class="sd">	:param utilities: manipulators utilities {manipulator_index:utility} (list)</span>
+
+<span class="sd">	:returns: </span>
+<span class="sd">		* **T** – types, tuples of utility values (list)</span>
+<span class="sd">		* **T_count** – for every type in T T_count has the number of candidates</span>
+<span class="sd">		* **candidates** – list of each candidate&#39;s type</span>
+<span class="sd">	:rtype: tuple (T, T_count, candidates)</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="c1"># determine possible type vectors by removing duplicates</span>
+	<span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">utilities</span><span class="p">]</span>
+	<span class="n">T</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">))</span>
+
+	<span class="c1"># T_count[i] denotes the count of candidates of type T[i] in utilities</span>
+	<span class="n">T_count</span> <span class="o">=</span> <span class="p">[</span><span class="n">candidates</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span> <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">T</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_count</span><span class="p">,</span> <span class="n">candidates</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">ManipLib</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">title</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Lydia Kalkbrenner.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
