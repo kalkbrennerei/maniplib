@@ -5,3 +5,6 @@ conf.py
 index.rst
 Makefile
 maniplib/__pycache__/
+maniplib/preflibtools/__pycache__/
+README.rst
+includeme.rst
