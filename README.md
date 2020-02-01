@@ -47,5 +47,7 @@ for cand in candidates_to_approve:
 
 Explain other usages.
 
+Documentation available [here](https://kalkbrennerei.github.io/maniplib/).
+
 ## License
 The code is copyright Lydia Kalkbrenner 2020 under the [Apache License 2.0](LICENSE).
