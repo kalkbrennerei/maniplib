@@ -4,3 +4,4 @@ _templates/
 conf.py
 index.rst
 Makefile
+maniplib/__pycache__/
