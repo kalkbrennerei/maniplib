@@ -1,14 +1,14 @@
 # ManipLib
 
-This tool solves the coalitional manipulation problem for the *l-Bloc* voting rule, a multiwinner extension of [Single Non-Transferable Vote](https://en.wikipedia.org/wiki/Single_non-transferable_vote).
+This tool solves the coalitional manipulation problem for the *l-Bloc* voting rule, an extension of [Single Non-Transferable Vote](https://en.wikipedia.org/wiki/Single_non-transferable_vote), a multiwinner voting rule.
 
-Includes functions to solve the following variants of *l-Bloc*:
-- Utilitarian and Candidate-wise egalitarian variant
-- Utilitarian and Candidate-wise egalitarian variant with consistent manipulators
-- Egalitarian variant
-- Egalitarian Tie-Breaking
+There are different ways of decing on a possible goal of manipulation by aggregating manipulators' utilities ([utilitarian](https://en.wikipedia.org/wiki/Social_welfare_function#Cardinal_social_welfare_functions), candidate-wise egalitarian and egalitarian evaluation) We provide an implementation of the following variants:
+- Utilitarian and Candidate-wise egalitarian variant,
+- Utilitarian and Candidate-wise egalitarian variant with consistent manipulators,
+- Egalitarian variant, and
+- Egalitarian Tie-Breaking.
 
-As part of my [Bachelor thesis](todo) I implemented the algorithms proposed by [R. Bredereck, A. Kaczmarczyk, and R. Niedermeier](https://arxiv.org/abs/1806.10460). The variants of *l-Bloc* manipulation are based on different ways of how to aggregate manipulators' utilities to decide on a possible goal of a manipulation ([utilitarian](https://en.wikipedia.org/wiki/Social_welfare_function#Cardinal_social_welfare_functions), candidate-wise egalitarian and egalitarian evaluation).
+As part of my [Bachelor thesis](todo) I implemented the algorithms proposed by [R. Bredereck, A. Kaczmarczyk, and R. Niedermeier](https://arxiv.org/abs/1806.10460).
 
 ## Usage
 The egalitarian variant of manipulation and tie-breaking use the [Gurobi Optimizer](https://www.gurobi.com/) which requires a license (free for academic use).
@@ -37,6 +37,7 @@ k = 5 # specify number of winning candidates
 non_manip = dp.get_nonmanipulative_votes(rankmaps, utilities) # removing manipulative votes from the rankmaps
 candidates_to_approve, eval_value, candidates_winning, num_candidates_replaced = cm.consistent_manipulation(l, k, non_manip, utilities, mu.utilitarian)
 ```
+For candidate-wise evaluation, ```python mu.utilitarian``` can be exchanged by ```python mu.candegal```.
 
 The candidate map can be used to output the names of the candidates to support in a manipulation:
 ```python
@@ -45,7 +46,16 @@ for cand in candidates_to_approve:
 	names_to_approve.append(candmap[cand])
 ```
 
-Explain other usages.
+A result for a utilitarian manipulation (which doesn't require consistentcy) can be obtained as follows:
+```python
+from maniplib import manipulation_utils as mu
+from maniplib import consistent_manipulation as cm
+
+l = 6 # specify parameter of l-Bloc rule
+k = 5 # specify number of winning candidates
+non_manip = dp.get_nonmanipulative_votes(rankmaps, utilities) # removing manipulative votes from the rankmaps
+candidates_to_approve, eval_value, candidates_winning, num_candidates_replaced = cm.consistent_manipulation(l, k, non_manip, utilities, mu.utilitarian)
+```
 
 Documentation available [here](https://kalkbrennerei.github.io/maniplib/).
 

@@ -292,7 +292,7 @@ def manipulation(l, k, non_manip_rankmaps, utilities, eval_f):
 					continue
 
 				X_res = [C_star[x] for x in X]
-
+				# todo: add distribute_remaining to X
 
 				# check if remaining approvals can be distributed
 				if distribute_remaining(r, C_star, s_star, k_star, W, X, strength_order)>0:
