@@ -8,7 +8,7 @@ There are different ways of decing on a possible goal of manipulation by aggrega
 - Egalitarian variant, and
 - Egalitarian Tie-Breaking.
 
-As part of my [Bachelor thesis](todo) I implemented the algorithms proposed by [R. Bredereck, A. Kaczmarczyk, and R. Niedermeier](https://arxiv.org/abs/1806.10460).
+As part of my [Bachelor thesis](https://fpt.akt.tu-berlin.de/publications/theses/BA-lydia-kalkbrenner.pdf) I implemented the algorithms proposed by [R. Bredereck, A. Kaczmarczyk, and R. Niedermeier](https://arxiv.org/abs/1806.10460).
 
 ## Usage
 The egalitarian variant of manipulation and tie-breaking use the [Gurobi Optimizer](https://www.gurobi.com/) which requires a license (free for academic use).
