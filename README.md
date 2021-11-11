@@ -60,4 +60,4 @@ candidates_to_approve, eval_value, candidates_winning, num_candidates_replaced =
 Documentation available [here](https://kalkbrennerei.github.io/maniplib/).
 
 ## License
-The code is copyright Lydia Kalkbrenner 2020 under the [Apache License 2.0](LICENSE).
+The code is copyright Lu Kalkbrenner 2020 under the [Apache License 2.0](LICENSE).
